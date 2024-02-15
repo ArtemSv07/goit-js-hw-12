@@ -48,12 +48,12 @@ form.addEventListener('submit', event => {
     showLoader();
     request.q = inputValue;
     const url = BASE_URL + new URLSearchParams(request);
-    getImagesFromAPI(url);
+    getImages(url);
   }
   input.value = '';
 });
 
-const getImagesFromAPI = async (url, scrollHight) => {
+const getImages = async (url, scrollHight) => {
   await axios
     .get(url)
     .then(({ data }) => {
@@ -133,7 +133,7 @@ btnLoad.addEventListener('click', () => {
       2 +
     26;
   console.log('Висота дисплея: ' + scrollHight + 'px');
-  getImagesFromAPI(url, scrollHight);
+  getImages(url, scrollHight);
 });
 
 function showLoader() {
