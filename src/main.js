@@ -2,10 +2,10 @@ import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-import axios from 'axios';
+import { pixabayApi } from './js/pixabay-api.js';
+import { renderFunctions } from './js/render-functions.js';
 
 const form = document.querySelector('.form');
-const fragment = document.createDocumentFragment();
 const gallery = document.querySelector('.gallery');
 const loader = document.querySelector('.loader');
 const btnLoad = document.querySelector('.load-more');
@@ -54,8 +54,7 @@ form.addEventListener('submit', event => {
 });
 
 const getImages = async (url, scrollHight) => {
-  await axios
-    .get(url)
+  await pixabayApi(url)
     .then(({ data }) => {
       const arrayImg = data.hits;
       totalImg = data.totalHits;
@@ -83,40 +82,10 @@ const getImages = async (url, scrollHight) => {
 };
 
 function render(arrayImg) {
-  arrayImg.forEach(
-    ({
-      webformatURL,
-      largeImageURL,
-      tags,
-      likes,
-      views,
-      comments,
-      downloads,
-    }) => {
-      const galleryItem = document.createElement('li');
-      galleryItem.classList.add('gallery-items');
-
-      galleryItem.insertAdjacentHTML(
-        'beforeend',
-        `<a class='gallery-link' href='${largeImageURL}'>
-          <img class='gallery-image' src='${webformatURL}' alt='${tags}' />
-          <ul class='gallery-ul'>
-          <li class='gallery-item'><h3 class='gallery-title'>Likes</h3><p class='gallery-value'>${likes}</p></li>
-          <li class='gallery-item'><h3 class='gallery-title'>Views</h3><p class='gallery-value'>${views}</p></li>
-          <li class='gallery-item'><h3 class='gallery-title'>Comments</h3><p class='gallery-value'>${comments}</p></li>
-          <li class='gallery-item'><h3 class='gallery-title'>Downloads</h3><p class='gallery-value'>${downloads}</p></li>
-        </ul>
-
-        </a>`
-      );
-      fragment.appendChild(galleryItem);
-    }
-  );
+  renderFunctions(arrayImg);
 
   showLoader();
   btnLoad.classList.remove('hide');
-
-  gallery.appendChild(fragment);
   lightbox.refresh();
   totalImgFunction();
 }
@@ -132,7 +101,7 @@ btnLoad.addEventListener('click', () => {
     document.querySelector('.gallery-items').getBoundingClientRect().height *
       2 +
     26;
-  console.log('Висота дисплея: ' + scrollHight + 'px');
+
   getImages(url, scrollHight);
 });
 
